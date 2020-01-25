@@ -1,4 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
+
+# Head ends here
+BOARD_SIZE = 5
 
 def create_distance_matrix(y, x, board):
     distance_matrix = []
@@ -13,68 +16,6 @@ def create_distance_matrix(y, x, board):
         return sorted(distance_matrix, key=lambda _: _[-1]).pop(0)
     else:
         return distance_matrix
-
-def seek_dirt(y, x, distance, direction, board):
-    ''' check w.r.t. position (y, x) on board if there is a dirty spot to clean
-    in provided direction at distance
-    
-    parameters:
-        y, x:  int
-            position on board w.r.t. to look towards direction
-
-        distance: int
-            maximum distance w.r.t. current position to look in to
-
-        direction: str
-            any valid direction 'n' for north, 's' for south, 'ns' for
-            northsouth, etc
-
-        board: nested list
-            the board itself
-
-    returns
-        : tuple
-        the coordinates of the first dirty at distance spot as a tuple
-        or 
-    '''
-
-    # function to calculate the distance components  w.r.t. current position
-    # NOTE: we are wokring with Taxicab geometry and corresponding equation of a circle
-    radii = lambda R, _: abs(R) - abs(_)
-    r_y = radii(distance, y)
-    r_x = radii(distance, x)
-
-    direction_valid = {
-            'n': lambda d, p: abs(d) - abs(p) if abs(d) - abs(p) > 0 else None
-            's': lambda d, p: abs(p) - abs(d) if abs(p) - abs(d) > 0 else None
-            'e': lambda d, p: abs(d) - abs(p) if abs(d) - abs(p) > 0 else None
-            'w': lambda d, p: abs(p) - abs(d) if abs(p) - abs(d) > 0 else None
-            }
-    
-
-
-
-
-def seek_nearest(y, x, board):
-    # seek the nearest spot to clean by iterating the distance from current position
-
-    
-    h = 1       # vertical/horizontal step
-    h_diag = 0  # diagonal step
-    
-    distance = {
-            'n': 1
-            's': -1
-            'ns': 
-            }
-
-    found = False
-    while not found:
-
-
-
-
-
 
 def next_move(posr, posc, board):
 
@@ -106,9 +47,9 @@ def next_move(posr, posc, board):
     else:
         print('CLEAN')
 
-    return 0
+# Tail starts here
 
 if __name__ == "__main__":
     pos = [int(i) for i in input().strip().split()]
-    board = [[j for j in input().strip()] for i in range(5)]
+    board = [[j for j in input().strip()] for i in range(BOARD_SIZE)]
     next_move(pos[0], pos[1], board)

@@ -1,9 +1,18 @@
-# Base BotClean solution based on minimal distance movement
-BOT_CLEAN := src/BotClean_minDistance.py
+# alias for unittest execution
+UNITTEST := python -m unittest -v 
 
-UNITTEST_EXE := python -m unittest
+# ln should always overwrite the created symbolic links
+LN := ln
+LN += --force
+LN += --symbolic
 
-test_next_move_BasicMovement:
-	$(UNITTEST_EXE) tst.test_BotClean_minDistance.next_move_BasicMovement
+# make $(file) the defualt target for testing
+# file is passed as argument, i.e. make default file=your_file_of_choice
+default:
+	@$(LN) $(file) src/main.py
 
+test_BasicMovement:
+	$(UNITTEST) tst.test_main.test_BasicMovement
 
+test_CleanBoard:
+	$(UNITTEST) tst.test_main.test_CleanBoard
