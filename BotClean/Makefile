@@ -6,13 +6,17 @@ LN := ln
 LN += --force
 LN += --symbolic
 
+MKDIR := mkdir
+MKDIR += --parents
+
 # make $(file) the defualt target for testing
 # file is passed as argument, i.e. make default file=your_file_of_choice
 default:
-	@$(LN) $(file) src/main.py
+	@$(MKDIR) bin/
+	@$(LN) ../src/$(file) bin/main.py
 
 test_BasicMovement:
-	$(UNITTEST) tst.test_main.test_BasicMovement
+	@$(UNITTEST) tst.test_main.test_BasicMovement
 
 test_CleanBoard:
-	$(UNITTEST) tst.test_main.test_CleanBoard
+	@$(UNITTEST) tst.test_main.test_CleanBoard

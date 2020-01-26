@@ -6,7 +6,7 @@ import sys
 # for debuging place pdb.set_trace() anywhere to create a breka point
 import pdb
 
-from src.main import next_move
+from bin.main import next_move
 
 # IO catch is based on https://stackoverflow.com/a/31281467
 
@@ -30,6 +30,7 @@ class test_BasicMovement(unittest.TestCase):
 
     def test_next_move_right(self):
 
+        #pdb.set_trace()
         from io import StringIO
         from unittest.mock import patch
 
@@ -261,17 +262,16 @@ class test_CleanBoard(unittest.TestCase):
         return board
 
     def test_board_5x5(self):
-    
+        
         # set local def values 
         board = self._generate_board(5,5)
         posr  = self.posr
         posc  = self.posc
         board[posr][posc] = 'b'
+        
+        r = self._clean_baord(posr, posc, board)
+        print('Bot cleaned board with ', r, ' moves')
 
-        print('Bot cleaned board with ',
-                self._clean_baord(posr, posc, board),
-                ' moves'
-                )
         return 
 
     def test_board_5x25(self):
@@ -282,10 +282,9 @@ class test_CleanBoard(unittest.TestCase):
         posc  = self.posc
         board[posr][posc] = 'b'
 
-        print('Bot cleaned board with ',
-                self._clean_baord(posr, posc, board),
-                ' moves'
-                )
+        r = self._clean_baord(posr, posc, board)
+        print('Bot cleaned board with ',r, ' moves')
+
         return 
 
     def test_board_25x5(self):
@@ -296,10 +295,9 @@ class test_CleanBoard(unittest.TestCase):
         posc  = self.posc
         board[posr][posc] = 'b'
 
-        print('Bot cleaned board with ',
-                self._clean_baord(posr, posc, board),
-                ' moves'
-                )
+        r = self._clean_baord(posr, posc, board)
+        print('Bot cleaned board with ',r, ' moves')
+
         return 
 
     def test_board_10x10(self):
@@ -310,10 +308,9 @@ class test_CleanBoard(unittest.TestCase):
         posc  = self.posc
         board[posr][posc] = 'b'
 
-        print('Bot cleaned board with ',
-                self._clean_baord(posr, posc, board),
-                ' moves'
-                )
+        r = self._clean_baord(posr, posc, board)
+        print('Bot cleaned board with ',r, ' moves')
+
         return 
 
     def test_board_15x30(self):
@@ -324,10 +321,9 @@ class test_CleanBoard(unittest.TestCase):
         posc  = self.posc
         board[posr][posc] = 'b'
 
-        print('Bot cleaned board with ',
-                self._clean_baord(posr, posc, board),
-                ' moves'
-                )
+        r = self._clean_baord(posr, posc, board)
+        print('Bot cleaned board with ', r,' moves')
+
         return 
 
     def test_board_30x15(self):
@@ -338,10 +334,9 @@ class test_CleanBoard(unittest.TestCase):
         posc  = self.posc
         board[posr][posc] = 'b'
 
-        print('Bot cleaned board with ',
-                self._clean_baord(posr, posc, board),
-                ' moves'
-                )
+        r = self._clean_baord(posr, posc, board)
+        print('Bot cleaned board with ', r, ' moves')
+
         return 
 
     def test_board_50x50(self):
@@ -352,10 +347,9 @@ class test_CleanBoard(unittest.TestCase):
         posc  = self.posc
         board[posr][posc] = 'b'
 
-        print('Bot cleaned board with ',
-                self._clean_baord(posr, posc, board),
-                ' moves'
-                )
+        r = self._clean_baord(posr, posc, board)
+        print('Bot cleaned board with ',r, ' moves')
+
         return 
 
     def test_board_75x75(self):
@@ -366,10 +360,9 @@ class test_CleanBoard(unittest.TestCase):
         posc  = self.posc
         board[posr][posc] = 'b'
 
-        print('Bot cleaned board with ',
-                self._clean_baord(posr, posc, board),
-                ' moves'
-                )
+        r = self._clean_baord(posr, posc, board)
+        print('Bot cleaned board with ',r, ' moves')
+
         return 
 
 if __name__ == '__main__':
