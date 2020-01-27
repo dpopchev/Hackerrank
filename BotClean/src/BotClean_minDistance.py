@@ -1,34 +1,45 @@
 #!/usr/bin/python
 
-def create_distance_matrix(y, x, board):
-    distance_matrix = []
-    for r, row in enumerate(board):
-        if 'd' in row:
-            for c, col in enumerate(row):
-                if col == 'd':
-                    #if not (abs(r-y) + abs(c-x)) == 0:
-                    distance_matrix.append([r-y,c-x,abs(r-y)+abs(c-x)])
-
-    if distance_matrix:
-        return sorted(distance_matrix, key=lambda _: _[-1]).pop(0)
-    else:
-        return distance_matrix
-
+# may miss dirty spots if are outside of the circle, e.g.
+#--------dd
+#----------
+#----------
+#----------
+#----------
+#----------
+#----------
+#----------
+#----b-----
+#----------
 def seek_closest_dirt(r):
     ''' generate the von Neumann neighborhood with radius r
     w.r.t. the current position
     '''
-
     for x in range(-r, r+1, 1):
         r_x = r - abs(x)
-        for y in range(-r_x, r_x+1, 1):
+        # fault for failing corner cases
+        #for y in range(-r_x, r_x+1, 1):
+        for y in range(-r, r+1, 1):
             # no need to yeild the current position
             if not ( x == 0 and y == 0):
                 yield (y, x)
 
+#def update_board_memory(board):
+#
+#    fname = 'dpbotclean'
+#
+#    mem_dirty_points = []
+#    # read the last saved state and filter 
+#    with open(fname, 'r') as fp:
+#        for line in fp:
+#            mem_dirty_points.append([ int(_) for _ in line.strip().split()])
+#
 def next_move(posr, posc, board):
     
     import random
+
+    # take notes on found dirty cells here
+    #board = update_bord_knownledge(board)
     
     dirt_found      = False    # track if dirt has been located
                                # they are marked with 'd'
@@ -51,12 +62,13 @@ def next_move(posr, posc, board):
         dirt_found = True
         action_taken = True
 
-    r = 0       # von Neuman neighborhood radius 
+    r = 0       # max step to make
     step_posr = step_posc = 0   # steps in y and x direction needed to find dirt cell
     # if we are not on dirty cell lets search for the nearest dirt
     while not dirt_found and len(board_overshoot) < 4:
         r += 1
         for y, x in seek_closest_dirt(r):
+        #for y, x in seek_closest_dirt(r, board):
             overshoot_y, overshoot_x = \
                     map(overshoot, [posr, posc],
                                    [y, x], 
@@ -87,7 +99,7 @@ def next_move(posr, posc, board):
         print(updown(step_posr))
     elif dirt_found and  step_posc != 0 and step_posr == 0:
         print(leftright(step_posc))
-    elif not action_taken and unknown_found:
+    elif not action_taken:
         choose_from = valid_moves.difference(board_overshoot) \
                 if valid_moves.difference(board_overshoot) \
                 else valid_moves

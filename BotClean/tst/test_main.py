@@ -139,6 +139,60 @@ class test_BasicMovement(unittest.TestCase):
 
         return
 
+    def test_partially_observable_corner_NotDown(self):
+
+        from io import StringIO
+        from unittest.mock import patch
+
+        board = self.standart_board.copy()
+
+        self.posr = 4
+        self.posc = 2
+
+        board[0] = [ _ for _ in 'ooooo' ]
+        board[1] = [ _ for _ in 'ooooo' ]
+        board[2] = [ _ for _ in 'ooooo' ]
+        board[3] = [ _ for _ in 'o---o' ]
+        board[4] = [ _ for _ in 'o-b-o' ]
+
+        with patch('sys.stdout', new=StringIO()) as fakeOutput:
+
+            r = next_move(self.posr, self.posc, board)
+            o = fakeOutput.getvalue().strip()
+        
+        self.assertNotEqual(o, 'CLEAN')
+        self.assertNotEqual(o, 'DOWN')
+
+        return
+
+    def test_partially_observable_corner_NotLeft(self):
+
+        from io import StringIO
+        from unittest.mock import patch
+
+        board = self.standart_board.copy()
+
+        self.posr = 2
+        self.posc = 0
+
+        board[0] = [ _ for _ in 'ooooo' ]
+        board[1] = [ _ for _ in '--ooo' ]
+        board[2] = [ _ for _ in 'b-ooo' ]
+        board[3] = [ _ for _ in '--ooo' ]
+        board[4] = [ _ for _ in 'ooooo' ]
+
+        pdb.set_trace()
+        with patch('sys.stdout', new=StringIO()) as fakeOutput:
+
+            r = next_move(self.posr, self.posc, board)
+            o = fakeOutput.getvalue().strip()
+        
+        self.assertNotEqual(o, 'CLEAN')
+        self.assertNotEqual(o, 'LEFT')
+
+        return
+
+
 class test_CleanBoard(unittest.TestCase):
 
     def setUp(self):
@@ -308,7 +362,8 @@ class test_CleanBoard(unittest.TestCase):
         posc  = self.posc
         board[posr][posc] = 'b'
 
-        r = self._clean_baord(posr, posc, board)
+        #pdb.set_trace()
+        r = self._clean_baord(posr, posc, board, stdout=False)
         print('Bot cleaned board with ',r, ' moves')
 
         return 
