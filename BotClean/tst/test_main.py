@@ -7,6 +7,7 @@ import sys
 import pdb
 
 from bin.main import next_move
+from bin.main import update_distance_matrix
 
 # IO catch is based on https://stackoverflow.com/a/31281467
 
@@ -419,6 +420,56 @@ class test_CleanBoard(unittest.TestCase):
         print('Bot cleaned board with ',r, ' moves')
 
         return 
+
+class test_IntermediateBoardStates(unittest.TestCase):
+
+    def setUp(self):
+
+        self.posr = 0
+        self.posc = 0
+
+        self.standart_board = [ 
+                [ '-', '-', '-', '-', 'd' ],
+                [ '-', 'd' ,'-' ,'-' ,'d' ],
+                [ '-', '-' ,'d' ,'d' ,'-' ],
+                [ '-', '-' ,'d' ,'-' ,'-' ],
+                [ '-', '-' ,'-' ,'-' ,'d' ]
+                ]
+        
+        # define a metric function for the sake of generality
+        self.metric = lambda x1, x2, y1, y2: abs(x1-x2) + abs(y1-y2)
+
+        # standart distance matrix w.r.t. standart position
+        self.standart_board_distance_matrix = []
+        for _r, row in enumerate(self.standart_board):
+            for _c, cell in enumerate(row):
+                if cell == 'd':
+                    self.standart_board_distance_matrix.append(
+                                [ _r, _c, metric(_r, self.posr, _c, self.posc)]
+                                )
+
+        # temp file name for testing
+        self.fboard = 'dp_board_state'
+
+        return
+
+    def tearDown(self):
+
+        import os
+
+        # remove temp file for intermidate board states, if exists
+        if os.path.exists(self.fboard):
+            os.remove(self.fboard)
+
+        return
+    
+    def test_standartBoard_distance_matrix(self):
+
+        distance_matrix = update_distance_matrix(slef.posr, self.posc,
+                                                  self.standart_board
+                                                )
+
+        assertEqual(distance_matrix.sort(), self.standart_board_distance_matrix.sort()) 
 
 if __name__ == '__main__':
     unittest.main()

@@ -34,7 +34,49 @@ def seek_closest_dirt(r):
 #        for line in fp:
 #            mem_dirty_points.append([ int(_) for _ in line.strip().split()])
 #
+def update_distance_matrix(r, c, board):
+    ''' for the current state of the board and bot position,
+    update the distance matrix and return it
+    parameters:
+        r, c:   int
+            row and column of bot position
+
+        board:  nested list
+            the board presenting the current state
+    '''
+
+    # file name for intermediate board state saves
+    fboard = 'dp_board_state'
+
+    # define a metric function in the sake of generality 
+    metric = lambda x1, x2, y1, y2: abs(x1-x2) + abs(y1-y2)
+
+    # take a look for dirt on the board and save their position 
+    # and relative distance from current bot position
+    _distance_matrix = []
+    for _r, row in enumerate(board):
+        for _c, cell in enumerate(row):
+            if cell == 'd':
+                _distance_matrix.append([_r, _c, metric(_r, r, _c, c)])
+
+    # try to update the previous board state with the current one
+    # TODO look up if a pairs in present baord state are already in previus
+    try:
+        with open(fboard, 'r') as fb:
+            for line in fb:
+
+             
+
+
+
+
+def get_closest_dirt(posr, posc, board):
+
+    distance_matrix = update_distance_mmatrix(posr, posc, board)
+
 def next_move(posr, posc, board):
+
+    r, c = get_closest_dirt(posr, posc, board)
     
     import random
 
@@ -107,7 +149,6 @@ def next_move(posr, posc, board):
 
     return
 
-# Tail starts here
 if __name__ == "__main__":
     pos = [int(i) for i in input().strip().split()]
     board = [[j for j in input().strip()] for i in range(5)]
