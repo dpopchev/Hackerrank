@@ -31,7 +31,6 @@ class test_BasicMovement(unittest.TestCase):
 
     def test_next_move_right(self):
 
-        #pdb.set_trace()
         from io import StringIO
         from unittest.mock import patch
 
@@ -65,6 +64,7 @@ class test_BasicMovement(unittest.TestCase):
         board[0] = [ _ for _ in '-d---' ]
         board[1] = [ _ for _ in '-d-d-' ]
 
+        pdb.set_trace()
         with patch('sys.stdout', new=StringIO()) as fakeOutput:
 
             r = next_move(self.posr, self.posc, board)
@@ -131,6 +131,7 @@ class test_BasicMovement(unittest.TestCase):
         board[0] = [ _ for _ in '-d---' ]
         board[1] = [ _ for _ in '-----' ]
 
+        #pdb.set_trace()
         with patch('sys.stdout', new=StringIO()) as fakeOutput:
 
             r = next_move(self.posr, self.posc, board)
@@ -182,7 +183,6 @@ class test_BasicMovement(unittest.TestCase):
         board[3] = [ _ for _ in '--ooo' ]
         board[4] = [ _ for _ in 'ooooo' ]
 
-        pdb.set_trace()
         with patch('sys.stdout', new=StringIO()) as fakeOutput:
 
             r = next_move(self.posr, self.posc, board)
@@ -445,7 +445,7 @@ class test_IntermediateBoardStates(unittest.TestCase):
             for _c, cell in enumerate(row):
                 if cell == 'd':
                     self.standart_board_distance_matrix.append(
-                                [ _r, _c, metric(_r, self.posr, _c, self.posc)]
+                                [ _r, _c, self.metric(_r, self.posr, _c, self.posc)]
                                 )
 
         # temp file name for testing
@@ -463,13 +463,100 @@ class test_IntermediateBoardStates(unittest.TestCase):
 
         return
     
-    def test_standartBoard_distance_matrix(self):
+    def test_distance_matrix(self):
 
-        distance_matrix = update_distance_matrix(slef.posr, self.posc,
-                                                  self.standart_board
-                                                )
+        distance_matrix = update_distance_matrix(
+                self.posr, self.posc,
+                self.standart_board
+                )
 
-        assertEqual(distance_matrix.sort(), self.standart_board_distance_matrix.sort()) 
+        self.assertCountEqual(
+                sorted(distance_matrix, key = lambda _: _[-1]),
+                sorted(self.standart_board_distance_matrix, key = lambda _: _[-1])
+                ) 
+
+    def test_intermidate_state_save(self):
+
+        # assure that no intermidate state is saved initially
+        self.assertRaises(IOError, open, self.fboard, 'r')
+
+        distance_matrix = update_distance_matrix(
+                self.posr, self.posc,
+                self.standart_board
+                )
+
+
+        _saved_states = []
+        with open(self.fboard, 'r') as fb:
+            for line in fb:
+                _saved_states.append( 
+                    [ int(_) for _ in line.strip().split() ]
+                    )
+
+        self.assertCountEqual(
+                sorted(distance_matrix, key = lambda _: _[-1]),
+                sorted(_saved_states, key = lambda _: _[-1])
+                ) 
+
+    def test_intermidate_state_save_updated_added(self):
+
+        # assure that no intermidate state is saved initially
+        self.assertRaises(IOError, open, self.fboard, 'r')
+
+        # create distane matrix based on standart board
+        distance_matrix = update_distance_matrix(
+                self.posr, self.posc,
+                self.standart_board
+                )
+
+        # append additional dirt on the right of the bot initial position
+        self.standart_board[0][1] = 'd' 
+        distance_matrix = update_distance_matrix(
+                self.posr, self.posc,
+                self.standart_board
+                )
+
+        _saved_states = []
+        with open(self.fboard, 'r') as fb:
+            for line in fb:
+                _saved_states.append( 
+                    [ int(_) for _ in line.strip().split() ]
+                    )
+
+        self.assertCountEqual(
+                sorted(distance_matrix, key = lambda _: _[-1]),
+                sorted(_saved_states, key = lambda _: _[-1])
+                ) 
+
+    def test_intermidate_state_save_updated_removed(self):
+
+        # assure that no intermidate state is saved initially
+        self.assertRaises(IOError, open, self.fboard, 'r')
+
+        # create distane matrix based on standart board
+        distance_matrix = update_distance_matrix(
+                self.posr, self.posc,
+                self.standart_board
+                )
+
+        # append additional dirt on the right of the bot initial position
+        self.standart_board[0][-1] = '-' 
+        distance_matrix = update_distance_matrix(
+                self.posr, self.posc,
+                self.standart_board
+                )
+
+        _saved_states = []
+        with open(self.fboard, 'r') as fb:
+            for line in fb:
+                _saved_states.append( 
+                    [ int(_) for _ in line.strip().split() ]
+                    )
+
+        self.assertCountEqual(
+                sorted(distance_matrix, key = lambda _: _[-1]),
+                sorted(_saved_states, key = lambda _: _[-1])
+                ) 
 
 if __name__ == '__main__':
     unittest.main()

@@ -20,3 +20,6 @@ test_BasicMovement:
 
 test_CleanBoard:
 	@$(UNITTEST) tst.test_main.test_CleanBoard
+
+test_IntermediateBoardStates:
+	@$(UNITTEST) tst.test_main.test_IntermediateBoardStates

@@ -36,13 +36,19 @@ def seek_closest_dirt(r):
 #
 def update_distance_matrix(r, c, board):
     ''' for the current state of the board and bot position,
-    update the distance matrix and return it
+    update the distance matrix and return it sorted w.r.t. the relative distance
+
     parameters:
         r, c:   int
             row and column of bot position
 
         board:  nested list
             the board presenting the current state
+
+    return:
+        : list
+            distance matrix consisted of
+                [ position_row, position_col, distanse w.r.t. bot position ]
     '''
 
     # file name for intermediate board state saves
@@ -59,95 +65,82 @@ def update_distance_matrix(r, c, board):
             if cell == 'd':
                 _distance_matrix.append([_r, _c, metric(_r, r, _c, c)])
 
-    # try to update the previous board state with the current one
-    # TODO look up if a pairs in present baord state are already in previus
+    # sort the distance matrix w.r.t. dirt distance
+    _distance_matrix.sort(key=lambda _: _[-1])
+
+    # update the board state with the previous one
+    # if no previous state is saved, save the current one
+    dirt_present = [ _[:2] for _ in _distance_matrix ]
     try:
         with open(fboard, 'r') as fb:
-            for line in fb:
+            for dirt_saved_str in fb:
+                dirt_saved = [ int(_) for _ in dirt_saved_str.strip().split() ]
+                if not dirt_saved[:2] in dirt_present:
+                    _distance_matrix.append( [ 
+                                              dirt_saved[0], dirt_saved[1],
+                                              metric( dirt_saved[0], r,
+                                                      dirt_saved[1], c
+                                                    )
+                                            ] )
+    except IOError:
+        pass
 
-             
+    # after local distance matrix has been refreshed with current bot position
+    # we should save it for next step
+    with open(fboard, 'w') as fb:
+        for dirt in _distance_matrix:
+            fb.write(' '.join([ str(_) for _ in dirt]) + '\n')
 
-
-
-
-def get_closest_dirt(posr, posc, board):
-
-    distance_matrix = update_distance_mmatrix(posr, posc, board)
+    _distance_matrix = [ [ _r - r, _c - c, _ ] for _r, _c, _ in _distance_matrix ] 
+    return sorted( _distance_matrix, key = lambda _: _[-1])
 
 def next_move(posr, posc, board):
 
-    r, c = get_closest_dirt(posr, posc, board)
-    
-    import random
-
-    # take notes on found dirty cells here
-    #board = update_bord_knownledge(board)
-    
-    dirt_found      = False    # track if dirt has been located
-                               # they are marked with 'd'
-    unknown_found   = False    # track if we have unobservable cells nearby
-                               # they are marked with 'o'
-    action_taken    = False    # track if action has been taken
-
-    valid_moves     = set(['UP', 'DOWN', 'LEFT', 'RIGHT'])
-
-    board_overshoot = set([])  # the board can be overshoot in 4 directions 
-                               # Up, Down, Left, Right
-    # neat way to check for overshooting
-    overshoot = lambda pos, step, lim: True if pos + step >= lim or pos + step < 0 else False
     leftright = lambda _: 'RIGHT' if _ > 0 else 'LEFT'
     updown    = lambda _: 'DOWN' if _ > 0 else 'UP'
 
-    # if we are sitting on dirty cell lets clean it and call it over 
+    clean_step = False
+
     if board[posr][posc] == 'd':
         print('CLEAN')
-        dirt_found = True
-        action_taken = True
+        clean_step = True
 
-    r = 0       # max step to make
-    step_posr = step_posc = 0   # steps in y and x direction needed to find dirt cell
-    # if we are not on dirty cell lets search for the nearest dirt
-    while not dirt_found and len(board_overshoot) < 4:
-        r += 1
-        for y, x in seek_closest_dirt(r):
-        #for y, x in seek_closest_dirt(r, board):
-            overshoot_y, overshoot_x = \
-                    map(overshoot, [posr, posc],
-                                   [y, x], 
-                                   [len(board), len(board[0])]
-                        )
+    if not clean_step:
+        distance_matrix = update_distance_matrix(posr, posc, board)
 
-            # if we are not overshooting in either x or y we can check for dirt
-            if not overshoot_y and not overshoot_x and board[posr+y][posc+x] == 'd':
-                step_posr, step_posc = y, x
-                dirt_found = True
-                break
-            if not overshoot_y and not overshoot_x and board[posr+y][posc+x] == 'o':
-                step_posr, step_posc = y, x
-                unknown_found = True
-            elif not dirt_found and overshoot_y:
-                board_overshoot.update([updown(y)])
-            elif not dirt_found and overshoot_x:
-                board_overshoot.update([leftright(x)])
-    
-    # if we have found a dirt spot, move towards it 
-    # otherwise try a random valid direction
-    if dirt_found and step_posr != 0 and step_posc != 0:
-        print( updown(step_posr) 
-                if abs(step_posr) <= abs(step_posc)
-                else leftright(step_posc)
-                )
-    elif dirt_found and step_posr != 0 and step_posc == 0:
-        print(updown(step_posr))
-    elif dirt_found and  step_posc != 0 and step_posr == 0:
-        print(leftright(step_posc))
-    elif not action_taken:
-        choose_from = valid_moves.difference(board_overshoot) \
-                if valid_moves.difference(board_overshoot) \
-                else valid_moves
-        print(random.choice(tuple(choose_from)))
+    # if any dirty spots found, go towards the closest
+    # else go either right, down, left, up, in that order
+    if not clean_step and len(distance_matrix):
 
-    return
+        r, c, _ = distance_matrix[0]
+
+        if r != 0 and c != 0: 
+            print( updown(r) 
+                    if abs(r) <= abs(c)
+                    else leftright(c)
+                    )
+        elif r != 0:
+            print(updown(r))
+        elif c != 0:
+            print(leftright(c))
+
+    elif not clean_step:
+        # worst case bot is seen a square around himself
+        max_offset = 2
+
+        # if not exceeding board borders to the right
+        if posc + max_offset < len(board[0]):
+            print('RIGHT')
+        # or down
+        elif posr + max_offset < len(board):
+            print('DOWN')
+        # or left
+        elif posc - max_offset < 0:
+            print('LEFT')
+        elif posr + max_offset < 0:
+            print('UP')
+
+    return 0
 
 if __name__ == "__main__":
     pos = [int(i) for i in input().strip().split()]
