@@ -23,10 +23,22 @@ class test_BasicMovement(unittest.TestCase):
                 [ '-', '-' ,'d' ,'-' ,'-' ],
                 [ '-', '-' ,'-' ,'-' ,'d' ]
                 ]
+        self.fboard = 'dp_board_state'
+        self.fmove  = 'dp_move_state'
 
         return
 
     def tearDown(self):
+
+        import os
+
+        # remove temp file for intermidate board states, if exists
+        if os.path.exists(self.fboard):
+            os.remove(self.fboard)
+
+        if os.path.exists(self.fmove):
+            os.remove(self.fmove)
+
         return
 
     def test_next_move_right(self):
@@ -64,7 +76,7 @@ class test_BasicMovement(unittest.TestCase):
         board[0] = [ _ for _ in '-d---' ]
         board[1] = [ _ for _ in '-d-d-' ]
 
-        pdb.set_trace()
+        #pdb.set_trace()
         with patch('sys.stdout', new=StringIO()) as fakeOutput:
 
             r = next_move(self.posr, self.posc, board)
@@ -219,9 +231,21 @@ class test_CleanBoard(unittest.TestCase):
 
         self.count_dirt = lambda b: sum(_.count('d') for _ in b)
 
+        self.fboard = 'dp_board_state'
+        self.fmove  = 'dp_move_state'
         return
 
     def tearDown(self):
+
+        import os
+
+        # remove temp file for intermidate board states, if exists
+        if os.path.exists(self.fboard):
+            os.remove(self.fboard)
+
+        if os.path.exists(self.fmove):
+            os.remove(self.fmove)
+
         return
 
     def _get_bot_input(self, r, c, b):
@@ -450,6 +474,7 @@ class test_IntermediateBoardStates(unittest.TestCase):
 
         # temp file name for testing
         self.fboard = 'dp_board_state'
+        self.fmove  = 'dp_move_state'
 
         return
 
@@ -460,6 +485,9 @@ class test_IntermediateBoardStates(unittest.TestCase):
         # remove temp file for intermidate board states, if exists
         if os.path.exists(self.fboard):
             os.remove(self.fboard)
+
+        if os.path.exists(self.fmove):
+            os.remove(self.fmove)
 
         return
     

@@ -23,3 +23,6 @@ test_CleanBoard:
 
 test_IntermediateBoardStates:
 	@$(UNITTEST) tst.test_main.test_IntermediateBoardStates
+
+test_all:
+	@$(UNITTEST) tst.test_main

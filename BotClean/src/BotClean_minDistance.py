@@ -1,39 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
-# may miss dirty spots if are outside of the circle, e.g.
-#--------dd
-#----------
-#----------
-#----------
-#----------
-#----------
-#----------
-#----------
-#----b-----
-#----------
-def seek_closest_dirt(r):
-    ''' generate the von Neumann neighborhood with radius r
-    w.r.t. the current position
-    '''
-    for x in range(-r, r+1, 1):
-        r_x = r - abs(x)
-        # fault for failing corner cases
-        #for y in range(-r_x, r_x+1, 1):
-        for y in range(-r, r+1, 1):
-            # no need to yeild the current position
-            if not ( x == 0 and y == 0):
-                yield (y, x)
-
-#def update_board_memory(board):
-#
-#    fname = 'dpbotclean'
-#
-#    mem_dirty_points = []
-#    # read the last saved state and filter 
-#    with open(fname, 'r') as fp:
-#        for line in fp:
-#            mem_dirty_points.append([ int(_) for _ in line.strip().split()])
-#
 def update_distance_matrix(r, c, board):
     ''' for the current state of the board and bot position,
     update the distance matrix and return it sorted w.r.t. the relative distance
@@ -68,14 +34,14 @@ def update_distance_matrix(r, c, board):
     # sort the distance matrix w.r.t. dirt distance
     _distance_matrix.sort(key=lambda _: _[-1])
 
-    # update the board state with the previous one
-    # if no previous state is saved, save the current one
+    # updated distance matrix with missing dirt spots from previous state
     dirt_present = [ _[:2] for _ in _distance_matrix ]
     try:
         with open(fboard, 'r') as fb:
             for dirt_saved_str in fb:
                 dirt_saved = [ int(_) for _ in dirt_saved_str.strip().split() ]
-                if not dirt_saved[:2] in dirt_present:
+                if not dirt_saved[:2] in dirt_present \
+                        and board[dirt_saved[0]][dirt_saved[1]] == 'd':
                     _distance_matrix.append( [ 
                                               dirt_saved[0], dirt_saved[1],
                                               metric( dirt_saved[0], r,
@@ -99,10 +65,22 @@ def next_move(posr, posc, board):
     leftright = lambda _: 'RIGHT' if _ > 0 else 'LEFT'
     updown    = lambda _: 'DOWN' if _ > 0 else 'UP'
 
+    fmove           = 'dp_move_state'
+    move_next       = ''
+    move_previous   = ''
+
+    # if this is not our first step, get what was the previous one
+    # to prevent a stand still
+    try:
+        with open(fmove, 'r') as fm:
+            move_previous = fm.readline().strip()
+    except IOError:
+        pass
+
     clean_step = False
 
     if board[posr][posc] == 'd':
-        print('CLEAN')
+        move_next = 'CLEAN'
         clean_step = True
 
     if not clean_step:
@@ -115,31 +93,33 @@ def next_move(posr, posc, board):
         r, c, _ = distance_matrix[0]
 
         if r != 0 and c != 0: 
-            print( updown(r) 
-                    if abs(r) <= abs(c)
-                    else leftright(c)
-                    )
+            move_next = updown(r) if abs(r) <= abs(c) else leftright(c)
         elif r != 0:
-            print(updown(r))
+            move_next = updown(r)
         elif c != 0:
-            print(leftright(c))
+            move_next = leftright(c)
 
-    elif not clean_step:
+    elif not clean_step and len(distance_matrix) == 0:
         # worst case bot is seen a square around himself
-        max_offset = 2
+        max_offset = 1
 
         # if not exceeding board borders to the right
-        if posc + max_offset < len(board[0]):
-            print('RIGHT')
+        if posc + max_offset < len(board[0]) and move_previous != 'LEFT':
+            move_next = 'RIGHT'
         # or down
-        elif posr + max_offset < len(board):
-            print('DOWN')
+        elif posr + max_offset < len(board) and move_previous != 'UP':
+            move_next = 'DOWN'
         # or left
-        elif posc - max_offset < 0:
-            print('LEFT')
-        elif posr + max_offset < 0:
-            print('UP')
+        elif posc - max_offset < 0 and move_previous != 'RIGHT':
+            move_next = 'LEFT'
+        elif posr + max_offset < 0 and move_previous != 'DOWN':
+            move_next = 'UP'
 
+    # save current move 
+    with open(fmove, 'w') as fm:
+        fm.write(move_next)
+
+    print(move_next)
     return 0
 
 if __name__ == "__main__":
