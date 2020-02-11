@@ -153,7 +153,7 @@ class test_BasicMovement(unittest.TestCase):
 
         return
 
-    def test_partially_observable_corner_NotDown(self):
+    def test_partially_observable_corner_NotDown_1(self):
 
         from io import StringIO
         from unittest.mock import patch
@@ -179,7 +179,34 @@ class test_BasicMovement(unittest.TestCase):
 
         return
 
-    def test_partially_observable_corner_NotLeft(self):
+    def test_partially_observable_corner_NotDown_2(self):
+
+        from io import StringIO
+        from unittest.mock import patch
+
+        board = self.standart_board.copy()
+
+        self.posr = 3
+        self.posc = 2
+
+        board[0] = [ _ for _ in 'ooooo' ]
+        board[1] = [ _ for _ in 'ooooo' ]
+        board[2] = [ _ for _ in 'o---o' ]
+        board[3] = [ _ for _ in 'o-b-o' ]
+        board[4] = [ _ for _ in 'o---o' ]
+
+        #pdb.set_trace()
+        with patch('sys.stdout', new=StringIO()) as fakeOutput:
+
+            r = next_move(self.posr, self.posc, board)
+            o = fakeOutput.getvalue().strip()
+        
+        self.assertNotEqual(o, 'CLEAN')
+        self.assertNotEqual(o, 'DOWN')
+
+        return
+
+    def test_partially_observable_corner_NotLeft_1(self):
 
         from io import StringIO
         from unittest.mock import patch
@@ -202,6 +229,87 @@ class test_BasicMovement(unittest.TestCase):
         
         self.assertNotEqual(o, 'CLEAN')
         self.assertNotEqual(o, 'LEFT')
+
+        return
+
+    def test_partially_observable_corner_NotLeft_2(self):
+
+        from io import StringIO
+        from unittest.mock import patch
+
+        board = self.standart_board.copy()
+
+        self.posr = 2
+        self.posc = 1
+
+        board[0] = [ _ for _ in 'ooooo' ]
+        board[1] = [ _ for _ in '---oo' ]
+        board[2] = [ _ for _ in '-b-oo' ]
+        board[3] = [ _ for _ in '---oo' ]
+        board[4] = [ _ for _ in 'ooooo' ]
+
+        with patch('sys.stdout', new=StringIO()) as fakeOutput:
+            
+            r = next_move(self.posr, self.posc, board)
+            o = fakeOutput.getvalue().strip()
+        
+        self.assertNotEqual(o, 'CLEAN')
+        self.assertNotEqual(o, 'LEFT')
+
+        return
+
+    def test_partially_observable_corner_NotRight_NotUp_1(self):
+
+        from io import StringIO
+        from unittest.mock import patch
+
+        board = self.standart_board.copy()
+
+        self.posr = 1
+        self.posc = 4
+
+        board[0] = [ _ for _ in 'ooo--' ]
+        board[1] = [ _ for _ in 'ooo-b' ]
+        board[2] = [ _ for _ in 'ooo--' ]
+        board[3] = [ _ for _ in 'ooooo' ]
+        board[4] = [ _ for _ in 'ooooo' ]
+
+        #pdb.set_trace()
+        with patch('sys.stdout', new=StringIO()) as fakeOutput:
+
+            r = next_move(self.posr, self.posc, board)
+            o = fakeOutput.getvalue().strip()
+        
+        self.assertNotEqual(o, 'CLEAN')
+        self.assertNotEqual(o, 'RIGHT')
+        self.assertNotEqual(o, 'UP')
+
+        return
+
+    def test_partially_observable_corner_NotRight_NotUp_2(self):
+
+        from io import StringIO
+        from unittest.mock import patch
+
+        board = self.standart_board.copy()
+
+        self.posr = 1
+        self.posc = 3
+
+        board[0] = [ _ for _ in 'oo---' ]
+        board[1] = [ _ for _ in 'oo-b-' ]
+        board[2] = [ _ for _ in 'oo---' ]
+        board[3] = [ _ for _ in 'ooooo' ]
+        board[4] = [ _ for _ in 'ooooo' ]
+
+        with patch('sys.stdout', new=StringIO()) as fakeOutput:
+
+            r = next_move(self.posr, self.posc, board)
+            o = fakeOutput.getvalue().strip()
+        
+        self.assertNotEqual(o, 'CLEAN')
+        self.assertNotEqual(o, 'RIGHT')
+        self.assertNotEqual(o, 'UP')
 
         return
 
