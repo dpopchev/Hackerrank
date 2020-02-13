@@ -16,7 +16,7 @@ class test_BasicMovement(unittest.TestCase):
     def setUp(self):
         self.posr = 0
         self.posc = 0
-        self.standart_board = [ 
+        self.standart_board = [
                 [ '-', '-', '-', '-', 'd' ],
                 [ '-', 'd' ,'-' ,'-' ,'d' ],
                 [ '-', '-' ,'d' ,'d' ,'-' ],
@@ -58,7 +58,7 @@ class test_BasicMovement(unittest.TestCase):
 
             r = next_move(self.posr, self.posc, board)
             o = fakeOutput.getvalue().strip()
-        
+
         self.assertEqual(o, 'RIGHT')
 
         return
@@ -81,7 +81,7 @@ class test_BasicMovement(unittest.TestCase):
 
             r = next_move(self.posr, self.posc, board)
             o = fakeOutput.getvalue().strip()
-        
+
         self.assertEqual(o, 'LEFT')
 
         return
@@ -103,7 +103,7 @@ class test_BasicMovement(unittest.TestCase):
 
             r = next_move(self.posr, self.posc, board)
             o = fakeOutput.getvalue().strip()
-        
+
         self.assertEqual(o, 'UP')
 
         return
@@ -125,7 +125,7 @@ class test_BasicMovement(unittest.TestCase):
 
             r = next_move(self.posr, self.posc, board)
             o = fakeOutput.getvalue().strip()
-        
+
         self.assertEqual(o, 'DOWN')
 
         return
@@ -148,7 +148,7 @@ class test_BasicMovement(unittest.TestCase):
 
             r = next_move(self.posr, self.posc, board)
             o = fakeOutput.getvalue().strip()
-        
+
         self.assertEqual(o, 'CLEAN')
 
         return
@@ -173,7 +173,7 @@ class test_BasicMovement(unittest.TestCase):
 
             r = next_move(self.posr, self.posc, board)
             o = fakeOutput.getvalue().strip()
-        
+
         self.assertNotEqual(o, 'CLEAN')
         self.assertNotEqual(o, 'DOWN')
 
@@ -200,7 +200,7 @@ class test_BasicMovement(unittest.TestCase):
 
             r = next_move(self.posr, self.posc, board)
             o = fakeOutput.getvalue().strip()
-        
+
         self.assertNotEqual(o, 'CLEAN')
         self.assertNotEqual(o, 'DOWN')
 
@@ -226,7 +226,7 @@ class test_BasicMovement(unittest.TestCase):
 
             r = next_move(self.posr, self.posc, board)
             o = fakeOutput.getvalue().strip()
-        
+
         self.assertNotEqual(o, 'CLEAN')
         self.assertNotEqual(o, 'LEFT')
 
@@ -249,10 +249,10 @@ class test_BasicMovement(unittest.TestCase):
         board[4] = [ _ for _ in 'ooooo' ]
 
         with patch('sys.stdout', new=StringIO()) as fakeOutput:
-            
+
             r = next_move(self.posr, self.posc, board)
             o = fakeOutput.getvalue().strip()
-        
+
         self.assertNotEqual(o, 'CLEAN')
         self.assertNotEqual(o, 'LEFT')
 
@@ -279,7 +279,7 @@ class test_BasicMovement(unittest.TestCase):
 
             r = next_move(self.posr, self.posc, board)
             o = fakeOutput.getvalue().strip()
-        
+
         self.assertNotEqual(o, 'CLEAN')
         self.assertNotEqual(o, 'RIGHT')
         self.assertNotEqual(o, 'UP')
@@ -306,7 +306,7 @@ class test_BasicMovement(unittest.TestCase):
 
             r = next_move(self.posr, self.posc, board)
             o = fakeOutput.getvalue().strip()
-        
+
         self.assertNotEqual(o, 'CLEAN')
         self.assertNotEqual(o, 'RIGHT')
         self.assertNotEqual(o, 'UP')
@@ -321,7 +321,7 @@ class test_CleanBoard(unittest.TestCase):
         self.posr = 0
         self.posc = 0
 
-        self.standart_board = [ 
+        self.standart_board = [
                 [ '-', '-', '-', '-', 'd' ],
                 [ '-', 'd' ,'-' ,'-' ,'d' ],
                 [ '-', '-' ,'d' ,'d' ,'-' ],
@@ -330,7 +330,7 @@ class test_CleanBoard(unittest.TestCase):
                 ]
 
         self.move = {
-                'LEFT'  : lambda y, x: (y, x-1), 
+                'LEFT'  : lambda y, x: (y, x-1),
                 'RIGHT' : lambda y, x: (y, x+1),
                 'UP'    : lambda y, x: (y-1, x),
                 'DOWN'  : lambda y, x: (y+1, x),
@@ -374,7 +374,7 @@ class test_CleanBoard(unittest.TestCase):
         for r in map(''.join, b):
             print(r)
 
-        return 
+        return
 
     def _clean_baord(self, posr, posc, board, stdout = False):
 
@@ -397,27 +397,27 @@ class test_CleanBoard(unittest.TestCase):
                 board[posr][posc] = 'b'
 
             else:
-                board[posr][posc] = '-' 
+                board[posr][posc] = '-'
                 posr, posc = self.move[bot_says](posr, posc)
 
                 # make sure bot is not overshooting the board vertically
-                self.assertLess(posr, len(board))   
+                self.assertLess(posr, len(board))
                 self.assertGreaterEqual(posr, 0)
 
                 # make sure bot is not overshooting the board horizontally
-                self.assertLess(posc, len(board[0]))   
+                self.assertLess(posc, len(board[0]))
                 self.assertGreaterEqual(posc, 0)
 
                 board[posr][posc] = 'd' if board[posr][posc] == 'd' else 'b'
 
             count_moves += 1
-            
+
             if stdout:
                 print(bot_says)
                 print('\n')
 
         return count_moves
-    
+
     def _generate_board(self, max_y, max_x, coef = 0.2):
         ''' generate board of nested lists with max_y rows and max_x cols
             by filling max_y*max_x*coef dirty cells
@@ -426,7 +426,7 @@ class test_CleanBoard(unittest.TestCase):
                 mandatory input to set board size
 
             coef: float
-                what amount of the cells should be marked dirty  
+                what amount of the cells should be marked dirty
         '''
 
         from random import randint
@@ -449,21 +449,21 @@ class test_CleanBoard(unittest.TestCase):
         return board
 
     def test_board_5x5(self):
-        
-        # set local def values 
+
+        # set local def values
         board = self._generate_board(5,5)
         posr  = self.posr
         posc  = self.posc
         board[posr][posc] = 'b'
-        
+
         r = self._clean_baord(posr, posc, board)
         print('Bot cleaned board with ', r, ' moves')
 
-        return 
+        return
 
     def test_board_5x25(self):
-    
-        # set local def values 
+
+        # set local def values
         board = self._generate_board(5,25)
         posr  = self.posr
         posc  = self.posc
@@ -472,11 +472,11 @@ class test_CleanBoard(unittest.TestCase):
         r = self._clean_baord(posr, posc, board)
         print('Bot cleaned board with ',r, ' moves')
 
-        return 
+        return
 
     def test_board_25x5(self):
-    
-        # set local def values 
+
+        # set local def values
         board = self._generate_board(25,5)
         posr  = self.posr
         posc  = self.posc
@@ -485,11 +485,11 @@ class test_CleanBoard(unittest.TestCase):
         r = self._clean_baord(posr, posc, board)
         print('Bot cleaned board with ',r, ' moves')
 
-        return 
+        return
 
     def test_board_10x10(self):
-    
-        # set local def values 
+
+        # set local def values
         board = self._generate_board(10,10)
         posr  = self.posr
         posc  = self.posc
@@ -499,11 +499,11 @@ class test_CleanBoard(unittest.TestCase):
         r = self._clean_baord(posr, posc, board, stdout=False)
         print('Bot cleaned board with ',r, ' moves')
 
-        return 
+        return
 
     def test_board_15x30(self):
-    
-        # set local def values 
+
+        # set local def values
         board = self._generate_board(15,30)
         posr  = self.posr
         posc  = self.posc
@@ -512,11 +512,11 @@ class test_CleanBoard(unittest.TestCase):
         r = self._clean_baord(posr, posc, board)
         print('Bot cleaned board with ', r,' moves')
 
-        return 
+        return
 
     def test_board_30x15(self):
-    
-        # set local def values 
+
+        # set local def values
         board = self._generate_board(30,15)
         posr  = self.posr
         posc  = self.posc
@@ -525,11 +525,11 @@ class test_CleanBoard(unittest.TestCase):
         r = self._clean_baord(posr, posc, board)
         print('Bot cleaned board with ', r, ' moves')
 
-        return 
+        return
 
     def test_board_50x50(self):
-    
-        # set local def values 
+
+        # set local def values
         board = self._generate_board(50,50)
         posr  = self.posr
         posc  = self.posc
@@ -538,20 +538,21 @@ class test_CleanBoard(unittest.TestCase):
         r = self._clean_baord(posr, posc, board)
         print('Bot cleaned board with ',r, ' moves')
 
-        return 
+        return
 
-    def test_board_75x75(self):
-    
-        # set local def values 
-        board = self._generate_board(75,75)
-        posr  = self.posr
-        posc  = self.posc
-        board[posr][posc] = 'b'
+    # takes the longest so disabling it
+    #def test_board_75x75(self):
+    #
+    #    # set local def values
+    #    board = self._generate_board(75,75)
+    #    posr  = self.posr
+    #    posc  = self.posc
+    #    board[posr][posc] = 'b'
 
-        r = self._clean_baord(posr, posc, board)
-        print('Bot cleaned board with ',r, ' moves')
+    #    r = self._clean_baord(posr, posc, board)
+    #    print('Bot cleaned board with ',r, ' moves')
 
-        return 
+    #    return
 
 class test_IntermediateBoardStates(unittest.TestCase):
 
@@ -560,14 +561,14 @@ class test_IntermediateBoardStates(unittest.TestCase):
         self.posr = 0
         self.posc = 0
 
-        self.standart_board = [ 
+        self.standart_board = [
                 [ '-', '-', '-', '-', 'd' ],
                 [ '-', 'd' ,'-' ,'-' ,'d' ],
                 [ '-', '-' ,'d' ,'d' ,'-' ],
                 [ '-', '-' ,'d' ,'-' ,'-' ],
                 [ '-', '-' ,'-' ,'-' ,'d' ]
                 ]
-        
+
         # define a metric function for the sake of generality
         self.metric = lambda x1, x2, y1, y2: abs(x1-x2) + abs(y1-y2)
 
@@ -598,7 +599,7 @@ class test_IntermediateBoardStates(unittest.TestCase):
             os.remove(self.fmove)
 
         return
-    
+
     def test_distance_matrix(self):
 
         distance_matrix = update_distance_matrix(
@@ -609,7 +610,7 @@ class test_IntermediateBoardStates(unittest.TestCase):
         self.assertCountEqual(
                 sorted(distance_matrix, key = lambda _: _[-1]),
                 sorted(self.standart_board_distance_matrix, key = lambda _: _[-1])
-                ) 
+                )
 
     def test_intermidate_state_save(self):
 
@@ -625,14 +626,14 @@ class test_IntermediateBoardStates(unittest.TestCase):
         _saved_states = []
         with open(self.fboard, 'r') as fb:
             for line in fb:
-                _saved_states.append( 
+                _saved_states.append(
                     [ int(_) for _ in line.strip().split() ]
                     )
 
         self.assertCountEqual(
                 sorted(distance_matrix, key = lambda _: _[-1]),
                 sorted(_saved_states, key = lambda _: _[-1])
-                ) 
+                )
 
     def test_intermidate_state_save_updated_added(self):
 
@@ -646,7 +647,7 @@ class test_IntermediateBoardStates(unittest.TestCase):
                 )
 
         # append additional dirt on the right of the bot initial position
-        self.standart_board[0][1] = 'd' 
+        self.standart_board[0][1] = 'd'
         distance_matrix = update_distance_matrix(
                 self.posr, self.posc,
                 self.standart_board
@@ -655,14 +656,14 @@ class test_IntermediateBoardStates(unittest.TestCase):
         _saved_states = []
         with open(self.fboard, 'r') as fb:
             for line in fb:
-                _saved_states.append( 
+                _saved_states.append(
                     [ int(_) for _ in line.strip().split() ]
                     )
 
         self.assertCountEqual(
                 sorted(distance_matrix, key = lambda _: _[-1]),
                 sorted(_saved_states, key = lambda _: _[-1])
-                ) 
+                )
 
     def test_intermidate_state_save_updated_removed(self):
 
@@ -675,8 +676,8 @@ class test_IntermediateBoardStates(unittest.TestCase):
                 self.standart_board
                 )
 
-        # append additional dirt on the right of the bot initial position
-        self.standart_board[0][-1] = '-' 
+        # remove dirt on the right of the bot
+        self.standart_board[0][-1] = '-'
         distance_matrix = update_distance_matrix(
                 self.posr, self.posc,
                 self.standart_board
@@ -685,14 +686,36 @@ class test_IntermediateBoardStates(unittest.TestCase):
         _saved_states = []
         with open(self.fboard, 'r') as fb:
             for line in fb:
-                _saved_states.append( 
+                _saved_states.append(
                     [ int(_) for _ in line.strip().split() ]
                     )
 
         self.assertCountEqual(
                 sorted(distance_matrix, key = lambda _: _[-1]),
                 sorted(_saved_states, key = lambda _: _[-1])
-                ) 
+                )
+
+    def test_intermidate_state_hidden_dirt_1(self):
+
+        # assure that no intermidate state is saved initially
+        self.assertRaises(IOError, open, self.fboard, 'r')
+
+        board = self.standart_board.copy()
+        board[0] = [ _ for _ in 'ooooo' ]
+        board[1] = [ _ for _ in 'ooooo' ]
+        board[2] = [ _ for _ in 'ooooo' ]
+        board[3] = [ _ for _ in 'o---o' ]
+        board[4] = [ _ for _ in 'o-b-o' ]
+
+        posr = 4
+        posc = 2
+
+        # create distance matrix based on standart board
+        distance_matrix = update_distance_matrix(
+                posr, posc, board
+                )
+
+        self.assertEqual(len(distance_matrix), 0)
 
 if __name__ == '__main__':
     unittest.main()

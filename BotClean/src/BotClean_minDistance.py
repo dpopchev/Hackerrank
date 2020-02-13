@@ -22,29 +22,27 @@ def update_distance_matrix(r, c, board):
     # file name for intermediate board state saves
     fboard = 'dp_board_state'
 
-    # define a metric function in the sake of generality 
+    # define a metric function in the sake of generality
     metric = lambda x1, x2, y1, y2: abs(x1-x2) + abs(y1-y2)
 
-    # take a look for dirt on the board and save their position 
-    # and relative distance w.r.t. current bot position
+    # take a look for dirt on the board and save their absolute position
+    # i.g. (0, 0) cell following the matrix notation for the board itself
     _distance_matrix = []
     for _r, row in enumerate(board):
         for _c, cell in enumerate(row):
             if cell == 'd':
                 _distance_matrix.append([_r, _c, metric(_r, r, _c, c)])
 
-    # sort the distance matrix w.r.t. dirt distance
-    _distance_matrix.sort(key=lambda _: _[-1])
-
     # updated distance matrix with missing dirt spots from previous state
+    # do not update if now the bot is at the same position as saved dirt
     dirt_present = [ _[:2] for _ in _distance_matrix ]
     try:
         with open(fboard, 'r') as fb:
             for dirt_saved_str in fb:
                 dirt_saved = [ int(_) for _ in dirt_saved_str.strip().split() ]
                 if not dirt_saved[:2] in dirt_present \
-                        and board[dirt_saved[0]][dirt_saved[1]] == 'd':
-                    _distance_matrix.append( [ 
+                        and ( dirt_saved[0] != r and dirt_saved[1] != c ):
+                    _distance_matrix.append( [
                                               dirt_saved[0], dirt_saved[1],
                                               metric( dirt_saved[0], r,
                                                       dirt_saved[1], c
@@ -59,7 +57,7 @@ def update_distance_matrix(r, c, board):
         for dirt in _distance_matrix:
             fb.write(' '.join([ str(_) for _ in dirt]) + '\n')
 
-    _distance_matrix = [ [ _r - r, _c - c, _ ] for _r, _c, _ in _distance_matrix ] 
+    _distance_matrix = [ [ _r - r, _c - c, _ ] for _r, _c, _ in _distance_matrix ]
     return sorted( _distance_matrix, key = lambda _: _[-1])
 
 def next_move(posr, posc, board):
@@ -101,16 +99,16 @@ def next_move(posr, posc, board):
         move_next = 'CLEAN'
         clean_step = True
 
-    if not clean_step:
-        distance_matrix = update_distance_matrix(posr, posc, board)
+    # update the dirt distribution
+    distance_matrix = update_distance_matrix(posr, posc, board)
 
     # if any dirty spots found, go towards the closest
-    # else go either in any direction which is not opposing to our last move
+    # else go either in any direction which is not opposing our last move
     if not clean_step and len(distance_matrix) > 0:
 
         r, c, _ = distance_matrix[0]
 
-        if r != 0 and c != 0: 
+        if r != 0 and c != 0:
             move_next = updown(r) if abs(r) <= abs(c) else leftright(c)
         elif r != 0:
             move_next = updown(r)
@@ -155,7 +153,7 @@ def next_move(posr, posc, board):
 
         move_next = random.choice(directions_valid)
 
-    # save current move 
+    # save current move
     with open(fmove, 'w') as fm:
         fm.write(move_next)
 
