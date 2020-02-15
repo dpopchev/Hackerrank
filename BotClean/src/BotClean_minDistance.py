@@ -41,7 +41,7 @@ def update_distance_matrix(r, c, board):
             for dirt_saved_str in fb:
                 dirt_saved = [ int(_) for _ in dirt_saved_str.strip().split() ]
                 if not dirt_saved[:2] in dirt_present \
-                        and ( dirt_saved[0] != r and dirt_saved[1] != c ):
+                        and ( dirt_saved[0] != r or dirt_saved[1] != c ):
                     _distance_matrix.append( [
                                               dirt_saved[0], dirt_saved[1],
                                               metric( dirt_saved[0], r,

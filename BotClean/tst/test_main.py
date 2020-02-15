@@ -710,12 +710,16 @@ class test_IntermediateBoardStates(unittest.TestCase):
         posr = 4
         posc = 2
 
+        with open(self.fboard, 'w') as fb:
+            fb.write('4 4 2\n')
+
+        #pdb.set_trace()
         # create distance matrix based on standart board
         distance_matrix = update_distance_matrix(
                 posr, posc, board
                 )
 
-        self.assertEqual(len(distance_matrix), 0)
+        self.assertEqual(len(distance_matrix), 1)
 
 if __name__ == '__main__':
     unittest.main()
