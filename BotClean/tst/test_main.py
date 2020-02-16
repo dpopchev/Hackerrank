@@ -25,6 +25,7 @@ class test_BasicMovement(unittest.TestCase):
                 ]
         self.fboard = 'dp_board_state'
         self.fmove  = 'dp_move_state'
+        self.mboard = 'dp_mem_board'
 
         return
 
@@ -38,6 +39,9 @@ class test_BasicMovement(unittest.TestCase):
 
         if os.path.exists(self.fmove):
             os.remove(self.fmove)
+
+        if os.path.exists(self.mboard):
+            os.remove(self.mboard)
 
         return
 
@@ -341,6 +345,8 @@ class test_CleanBoard(unittest.TestCase):
 
         self.fboard = 'dp_board_state'
         self.fmove  = 'dp_move_state'
+        self.mboard = 'dp_mem_board'
+
         return
 
     def tearDown(self):
@@ -353,6 +359,9 @@ class test_CleanBoard(unittest.TestCase):
 
         if os.path.exists(self.fmove):
             os.remove(self.fmove)
+
+        if os.path.exists(self.mboard):
+            os.remove(self.mboard)
 
         return
 
@@ -584,6 +593,7 @@ class test_IntermediateBoardStates(unittest.TestCase):
         # temp file name for testing
         self.fboard = 'dp_board_state'
         self.fmove  = 'dp_move_state'
+        self.mboard = 'dp_mem_board'
 
         return
 
@@ -598,6 +608,8 @@ class test_IntermediateBoardStates(unittest.TestCase):
         if os.path.exists(self.fmove):
             os.remove(self.fmove)
 
+        if os.path.exists(self.mboard):
+            os.remove(self.mboard)
         return
 
     def test_distance_matrix(self):
@@ -720,8 +732,6 @@ class test_IntermediateBoardStates(unittest.TestCase):
                 posr, posc, board
                 )
 
-        next_move(posr, posc, board)
-
     def test_intermidate_state_hidden_dirt_2(self):
 
         # assure that no intermidate state is saved initially
@@ -759,7 +769,5 @@ class test_IntermediateBoardStates(unittest.TestCase):
                                                  ) ] 
                 )
         
-        next_move(posr, posc, board)
-
 if __name__ == '__main__':
     unittest.main()

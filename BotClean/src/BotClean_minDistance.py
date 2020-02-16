@@ -99,8 +99,9 @@ def next_move(posr, posc, board):
         move_next = 'CLEAN'
         clean_step = True
 
-    # update the dirt distribution
-    distance_matrix = update_distance_matrix(posr, posc, board)
+    # update the dirt distribution if present step was to clean
+    if not clean_step:
+        distance_matrix = update_distance_matrix(posr, posc, board)
 
     # if any dirty spots found, go towards the closest
     # else go either in any direction which is not opposing our last move
