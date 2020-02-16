@@ -710,16 +710,56 @@ class test_IntermediateBoardStates(unittest.TestCase):
         posr = 4
         posc = 2
 
-        with open(self.fboard, 'w') as fb:
-            fb.write('4 4 2\n')
+        predefine_dirt = [
+                [4, 4, 0],
+                [3, 4, 0]
+                ]
+        predefine_dirt_str = [ ' '.join([ str(__) for __ in _]) for _ in predefine_dirt ]
 
-        #pdb.set_trace()
-        # create distance matrix based on standart board
         distance_matrix = update_distance_matrix(
                 posr, posc, board
                 )
 
-        self.assertEqual(len(distance_matrix), 1)
+        next_move(posr, posc, board)
+
+    def test_intermidate_state_hidden_dirt_2(self):
+
+        # assure that no intermidate state is saved initially
+        self.assertRaises(IOError, open, self.fboard, 'r')
+
+        board = self.standart_board.copy()
+        board[0] = [ _ for _ in 'ooooo' ]
+        board[1] = [ _ for _ in 'ooooo' ]
+        board[2] = [ _ for _ in 'ooooo' ]
+        board[3] = [ _ for _ in 'o---o' ]
+        board[4] = [ _ for _ in 'o-b-o' ]
+
+        posr = 4
+        posc = 2
+
+        predefine_dirt = [
+                [4, 4, 0],
+                [3, 4, 0]
+                ]
+        predefine_dirt_str = [ ' '.join([ str(__) for __ in _]) for _ in predefine_dirt ]
+
+        with open(self.fboard, 'w') as fb:
+            fb.write('\n'.join(predefine_dirt_str))
+
+        # create distance matrix based on standard board
+        distance_matrix = update_distance_matrix(
+                posr, posc, board
+                )
+
+        self.assertEqual(len(distance_matrix), len(predefine_dirt))
+        self.assertCountEqual(
+                distance_matrix[0][:2],
+                [ _pos - pos for _pos, pos in zip(predefine_dirt[0][:2], 
+                                                  [posr, posc]
+                                                 ) ] 
+                )
+        
+        next_move(posr, posc, board)
 
 if __name__ == '__main__':
     unittest.main()

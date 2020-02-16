@@ -139,14 +139,14 @@ def next_move(posr, posc, board):
 
         # or left
         try:
-            if posc - max_offset <= 0:
+            if posc - max_offset < 0:
                 directions_valid.remove('LEFT')
         except ValueError:
             pass
 
         # or up
         try:
-            if posr - max_offset <= 0:
+            if posr - max_offset < 0:
                 directions_valid.remove('UP')
         except ValueError:
             pass
@@ -158,7 +158,7 @@ def next_move(posr, posc, board):
         fm.write(move_next)
 
     print(move_next)
-    return 0
+    return move_next
 
 if __name__ == "__main__":
     pos = [int(i) for i in input().strip().split()]
