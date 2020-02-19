@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import random
+# set if bot will solve the Partially Observable maze
+partially_observ = False
 
 def update_distance_matrix(r, c, board):
     ''' for the current state of the board and bot position,
@@ -16,14 +18,53 @@ def update_distance_matrix(r, c, board):
     return:
         : list
             distance matrix consisted of
-                [ position_row, position_col, distanse w.r.t. bot position ]
+                [ position_row, position_col, distance w.r.t. bot position ]
     '''
 
     # file name for intermediate board state saves
     fboard = 'dp_board_state'
 
+    # board cells the bot must pass through, so it will make the full board visible
+    fmustcells          = 'dp_must_pass_cells'
+    mustcells           = []
+    mustcells_defaults  = [
+            [ 1, 1 ],
+            [ 1, 3 ],
+            [ 3, 1 ],
+            [ 3, 3 ]
+            ]
     # define a metric function in the sake of generality
     metric = lambda x1, x2, y1, y2: abs(x1-x2) + abs(y1-y2)
+
+    if partially_observ:
+        try:
+            with open(fmustcells, 'r') as mc:
+                for mustcells_str in mc:
+                    _mustcells = [ int(_) for _ in mustcells_str.strip().split() ]
+                    if _mustcells[0] != r or _mustcells[1] != c:
+                        mustcells.append( [ _mustcells[0], _mustcells[1], 
+                                            metric( _mustcells[0], r,
+                                                    _mustcells[1], c
+                                                    )
+                                            ]
+                                        )
+        except IOError:
+            with open(fmustcells, 'w') as mc:
+                for mustcell_line in mustcells_defaults:
+                    mc.write(' '.join([ str(_) for _ in mustcell_line ]) + '\n') 
+
+            for _mustcells in mustcells_defaults:
+                if _mustcells[0] != r or _mustcells[1] != c:
+                    mustcells.append( [ _mustcells[0], _mustcells[1], 
+                                        metric( _mustcells[0], r,
+                                                _mustcells[1], c
+                                                )
+                                        ]
+                                    )
+        finally:
+            with open(fmustcells, 'w') as mc:
+                for mustcell_line in mustcells:
+                    mc.write(' '.join([ str(_) for _ in mustcell_line ]) + '\n') 
 
     # take a look for dirt on the board and save their absolute position
     # i.g. (0, 0) cell following the matrix notation for the board itself
@@ -56,6 +97,9 @@ def update_distance_matrix(r, c, board):
     with open(fboard, 'w') as fb:
         for dirt in _distance_matrix:
             fb.write(' '.join([ str(_) for _ in dirt]) + '\n')
+
+    if partially_observ:
+        _distance_matrix.extend(mustcells)
 
     _distance_matrix = [ [ _r - r, _c - c, _ ] for _r, _c, _ in _distance_matrix ]
     return sorted( _distance_matrix, key = lambda _: _[-1])
