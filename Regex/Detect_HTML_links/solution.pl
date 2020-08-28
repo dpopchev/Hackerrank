@@ -4,10 +4,10 @@ use warnings;
 use strict;
 use diagnostics;
 
-my $link_text = qr/href="(?'LINK'[^"]*)"[\w\s[:punct:]]*?>(?'TAGS'<\/?\w+>(?&TAGS)?)?(?'TEXT'[^<>\/]*)</;
+my $link_text = qr/<a\b[\w\s[:punct:]]+?\bhref="(?'LINK'[^"]*?)"[\w\s[:punct:]]*?>(?'TAGS'<\/?\w+>(?&TAGS)?)?(?'TEXT'[^<>\/]*)</;
 
 while (<>){
-    if ($_ =~ m/$link_text/) {
+    while ($_ =~ m/$link_text/g) {
         print defined $+{LINK} ? $+{LINK} : '',
               ",",
               defined $+{TEXT} ? $+{TEXT} : '',
