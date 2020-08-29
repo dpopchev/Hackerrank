@@ -20,7 +20,8 @@ my $testcase_files = [];
 my $results_files  = [];
 
 # fill available test cases and expected results
-for (1..7){
+my $testcases_count = 7;
+for (1..$testcases_count){
     push @$testcase_files , sprintf catfile($tc_folder, $file_formatter), $_;
     push @$results_files  , $testcase_files->[-1].'_expect';
 }
@@ -29,7 +30,7 @@ for (1..7){
 script_compiles($script);
 
 # iterate through test cases and respected results
-for my $tc_num (1..scalar @$testcase_files){
+for my $tc_num (0..scalar @$testcase_files - 1){
 
     open my $fh_tc     , '<' , $testcase_files->[$tc_num] or die $!;
     open my $fh_expect , '<' , $results_files->[$tc_num]  or die $!;
@@ -40,15 +41,25 @@ for my $tc_num (1..scalar @$testcase_files){
     close $fh_tc;
     close $fh_expect;
 
+    # redirect script stdin and stdout to variables
     my $tc_got;
     my $script_run_opts = {
-        stdin => \$tc_content,
-        stdout => \$tc_got
+        stdin  =>  \$tc_content,
+        stdout =>  \$tc_got
     };
 
-    script_runs([ $script ], $script_run_opts, sprintf($file_formatter, $tc_num));
+    # execute test with test case input
+    # and save the output into $tc_got
+    script_runs( [ $script ],
+                 $script_run_opts,
+                 sprintf($file_formatter.' exec', $tc_num+1)
+                 );
 
-    is_deeply( [split '\n', $tc_expect], [split '\n', $tc_got] );
+    # compare script and expected outptu
+    is_deeply( [split '\n', $tc_expect],
+               [split '\n', $tc_got],
+               sprintf($file_formatter.' compare', $tc_num+1)
+               );
 }
 
 done_testing();
