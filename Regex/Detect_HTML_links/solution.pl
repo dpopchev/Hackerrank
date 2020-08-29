@@ -4,8 +4,6 @@ use warnings;
 use strict;
 use diagnostics;
 
-# my $link_text = qr/<a\b[\w\s[:punct:]]+?\bhref="(?'LINK'[^"]*?)"[\w\s[:punct:]]*?>(?'TAGS'<\/?[\w\s[:punct:]]+?>(?&TAGS)?)?(?'TEXT'[\w\s[:punct:]]*?)(?=<\/\w+>)/;
-
 my $link_text = qr/# match the start of a anchor tag and consume all
                    # options which are not related to href
                    <a\b[\w\s[:punct:]]+?
