@@ -8,7 +8,7 @@ use Data::Dumper;
 
 # lets try to match searched words,
 # may fail if text also contains single word on a line
-my $word_tc = qr/(?'W_TC'[a-zA-Z]+)(ze|se)$/;
+my $word_tc = qr/(?'W_TC'^[a-zA-Z]+)(ze|se)$/;
 
 # slurp test case text
 my $text;
@@ -16,9 +16,10 @@ my $text;
 while (my $input_line = <>){
     if ($input_line =~ /$word_tc/){
         my $word_two_forms = qr/\b$+{W_TC}(?:ze|se)\b/;
-        my $count_matches = () = $text =~ /$word_two_forms/gi;
 
-        print $count_matches,"\n";
+        my @matches = $text =~ /$word_two_forms/gi;
+
+        print scalar @matches,"\n";
     }else {
         $text .= $input_line;
     }
