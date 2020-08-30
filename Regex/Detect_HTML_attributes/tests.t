@@ -6,8 +6,8 @@ use diagnostics;
 
 use Data::Dumper;
 
+use Test::More 'no_plan';
 use Test::Script;
-use Test::More;
 
 use File::Spec::Functions;
 
@@ -20,7 +20,7 @@ my $testcase_files = [];
 my $results_files  = [];
 
 # fill available test cases and expected results
-my $testcases_count = 7;
+my $testcases_count = 2;
 for (1..$testcases_count){
     push @$testcase_files , sprintf catfile($tc_folder, $file_formatter), $_;
     push @$results_files  , $testcase_files->[-1].'_expect';
@@ -56,10 +56,8 @@ for my $tc_num (0..scalar @$testcase_files - 1){
                  );
 
     # compare script and expected outptu
-    is_deeply( [split '\n', $tc_expect],
-               [split '\n', $tc_got],
+    is_deeply( [split '\n', $tc_got],
+               [split '\n', $tc_expect],
                sprintf($file_formatter.' compare', $tc_num+1)
                );
 }
-
-done_testing();

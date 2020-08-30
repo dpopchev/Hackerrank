@@ -4,30 +4,46 @@ use warnings;
 use strict;
 use diagnostics;
 
-my $link_text = qr/# match the start of a anchor tag and consume all
-                   # options which are not related to href
-                   <a\b[\w\s[:punct:]]+?
-                   # match the link enclosed into double qutes
-                   # of a href option
-                   \bhref="(?'LINK'[^"]*?)"[\w\s[:punct:]]*?>
-                   # match the rest opening or single tags
-                   (?'TAGS'<\/?[\w\s[:punct:]]+?>(?&TAGS)?)?
-                   # until the text itself is reached
-                   (?'TEXT'[\w\s[:punct:]]*?)
-                   # the text is evrything until a closing tag is met
-                   (?=<\/\w+>)/x;
+use Data::Dumper;
+
+# reg exp matches the tag and all its attributes
+my $tag_attr = qr/ <(?'TAG'\w+)\s*
+                   (?'ATTR'\w+="[\w[:punct:]\s]+?"\s*(?&ATTR)?)?\/?
+                   >/x;
+
+# attribute name
+my $attr_name = qr/(?'ATTR_NAME'\w+)=/x;
+
+# fill here the resulting matches
+# the tag match is used as a key, the attributes are filled into list
+my $r = {};
 
 # read from STDIN
 while (<>){
-    # go through all matches in the link
-    while ($_ =~ m/$link_text/g) {
-        # print the captured groups in desired output format
-        # check if the groups have captured anything, as they may be empty
-        # if they did -- trim leading and trailing spaces
-        print defined $+{LINK} ? $+{LINK} =~ s/^\s+|\s+$//r : '',
-              ",",
-              defined $+{TEXT} ? $+{TEXT} =~ s/^\s+|\s+$//r : '',
-              "\n";
+
+    # go through all matches
+    while ($_ =~ m/$tag_attr/g) {
+
+        # capture group name is destroyed as soon as new match is done
+        my $_tag  = $+{TAG};
+        my $_attr = $+{ATTR};
+
+        $r->{$_tag} = [] unless exists $r->{$_tag};
+
+        # if any attributes found fill them into the tag list
+        push @{$r->{$_tag}}, $+{ATTR_NAME} while ( defined $_attr
+                                                   and $_attr =~ m/$attr_name/g);
     }
 }
-<(?'TAG'\w+)\s*(?'ATTR'\w+="[\w[:punct:]\s]+?"\s*(?&ATTR)?)?\/?>
+
+# print the results in lexicographical order
+for my $k (sort keys %$r){
+
+    print "$k:";
+
+    # dummy hash to help remove duplicate attributes of a tag
+    my $seen = {};
+    print join ',', sort(grep { ! $seen->{$_} ++ } @{$r->{$k}});
+
+    print "\n";
+}
