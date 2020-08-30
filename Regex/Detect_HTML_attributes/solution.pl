@@ -8,11 +8,11 @@ use Data::Dumper;
 
 # reg exp matches the tag and all its attributes
 my $tag_attr = qr/ <(?'TAG'\w+)\s*
-                   (?'ATTR'\w+="[\w[:punct:]\s]+?"\s*(?&ATTR)?)?\/?
-                   >/x;
+                   (?'ATTR'\w+=['"][^'"]*['"]\s*(?&ATTR)?)?\s*\/?>
+                   /x;
 
 # attribute name
-my $attr_name = qr/(?'ATTR_NAME'\w+)=/x;
+my $attr_name = qr/(?'ATTR_NAME'\w+)=["']/;
 
 # fill here the resulting matches
 # the tag match is used as a key, the attributes are filled into list

@@ -20,7 +20,7 @@ my $testcase_files = [];
 my $results_files  = [];
 
 # fill available test cases and expected results
-my $testcases_count = 2;
+my $testcases_count = 3;
 for (1..$testcases_count){
     push @$testcase_files , sprintf catfile($tc_folder, $file_formatter), $_;
     push @$results_files  , $testcase_files->[-1].'_expect';
