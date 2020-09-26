@@ -7,6 +7,9 @@ Since all work was done in the Hackerrank environment, I did not create any
 test cases.
 Here you can find the function implementation only.
 
+NOTE: stupid me could have pushed all elements of into a stack, and then pop
+them. In terms of `Perl` or `Python` this would be `push/pop` and `append/pop`.
+
 ## Solution algorithm
 
 The following example will use the following two stacks:
