@@ -75,11 +75,22 @@ sub twoStacks {
         $R += $stack_A->[$move_A] if $move_A < $moves_A;
 
         my $local_moves_B = $moves_B;
+<<<<<<< HEAD
 
+=======
+>>>>>>> c25ce472035e72a1c17a898f286fe15895ebd364
         # slicing the array creates a new copy and the script bottlenecks
         # for large arrays
         # on other hand, shifting the first element and calculating size of array is O(1)
         # in contrast Python del 1 is with O(n)
+<<<<<<< HEAD
+=======
+
+        # not optimal foreach into slice of not drawn stack_B elements
+        #for (@$stack_B[$moves_B..$stack_B_size-1]){
+
+        # scalar and shift on array are O(1) in Perl
+>>>>>>> c25ce472035e72a1c17a898f286fe15895ebd364
         while (scalar @$stack_B > 0){
             last if $R - $stack_B->[0] < 0;
 
